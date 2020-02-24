@@ -1,0 +1,70 @@
+<div class="content-panel">
+    <!-- 탭 -->
+    <div id="tab">
+        <ul>
+            <li><a href="#tabs-1">학부 수강신청공지</a></li>
+            <li><a href="#tabs-2">학부 수강신청일정</a></li>
+            <li><a href="#tabs-3">학부 계절학기공지</a></li>
+            <li><a href="#tabs-4">학부 계절학기 등록일정</a></li>
+            <li><a href="#tabs-5">학부 희망과목공지</a></li>
+            <li><a href="#tabs-6">대학원 수강신청공지</a></li>
+            <li><a href="#tabs-7">신규시스템 유의사항</a></li>
+        </ul>
+        <div id="tabs-1">
+            <h1>학부 수강신청공지</h1>
+            <div class="notice-kor">
+                <h3>경희대학교 수강신청 비공식 연습 시스템</h3>
+            </div>
+        </div>
+        <div id="tabs-2">
+            <h1>학부 수강신청일정</h1>
+        </div>
+        <div id="tabs-3">
+            <h1>학부 계절학기공지</h1>
+        </div>
+        <div id="tabs-4">
+            <h1>학부 계절학기 등록일정</h1>
+        </div>
+        <div id="tabs-5">
+            <h1>학부 희망과목공지</h1>
+        </div>
+        <div id="tabs-6">
+            <h1>대학원 수강신청공지</h1>
+        </div>
+        <div id="tabs-7">
+            <h1>매크로 프로그램 방지</h1>
+        </div>
+    </div>
+    <!-- //탭 -->
+</div>
+
+<!--
+<div class="footer">
+	<div>
+		서울캠퍼스 02447 서울특별시 동대문구 경희대로 26  l  국제캠퍼스 17104 경기도 용인시 기흥구 덕영대로 1732  l  광릉캠퍼스 12001 경기도 남양주시 진접읍 광릉수목원로 195<br>
+		COPYRIGHT © KYUNG HEE UNIVERSITY. ALL RIGHT RESERVED.
+	</div>
+</div>
+-->
+<script type="text/javascript">
+  var schedule_cd = "hakbu";
+
+  $(document).ready(function(){
+    $("#tab").tabs({});
+    //$('.wrap-loader').fadeOut();
+
+    // 로그인하고 진입하였을 때...
+    if( schedule_cd == "hakbu" ){
+      $('#tab').tabs('option', 'active', '0');
+    }else if( schedule_cd == "wish" ){
+      $('#tab').tabs('option', 'active', '4');
+    }else if( schedule_cd == "sess" ){
+      $('#tab').tabs('option', 'active', '2');
+    }else if( schedule_cd == "grad" ){
+      $('#tab').tabs('option', 'active', '5');
+    }else{
+      $('#tab').tabs('option', 'active', '0');
+    }
+
+  });
+</script>

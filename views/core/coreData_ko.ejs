@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="/resources/js/jquery-1.12.4.min.js" ></script>
+
+
+    <script type="text/javascript" src="/resources/data/data_9999.js" ></script>
+
+    <script type="text/javascript" src="/resources/data/data_9998.js" ></script>
+
+    <script type="text/javascript" src="/resources/data/data_9997.js" ></script>
+
+    <script type="text/javascript" src="/resources/data/data_9996.js" ></script>
+
+    <script language="javascript">
+      var url 		= "/core?attribute=dateChk&loginYn=Y&fake="+Date.now();
+      var isLoad 		= false; // 개인정보 플래그
+      var arrPop 		= [];
+
+      /*
+       * 과목 생성시 관리자 화면에서 해당 화면을 리로드 한다. 그러므로 학생은 '개설학과 및 개설과목 정보가 변경됨에 따라 새로고침'이라는 문구를 볼 수 없다.
+         해당 내용을 수정하려면 관리자 페이지에서 reload 주석처리하고 수정 필요
+       */
+      function dateCheck(){
+        $.ajax({
+          url: url,
+          cache: false,				//사용자캐시를 사용할 것인가.
+          async:false,
+          success: function(data){	//ajax요청을 통해 반환되는 데이터 data.
+            if($("#lastdate").val() == ""){
+              $("#lastdate").val(data);
+            }
+            $("#lastModified").val(data);
+
+            if($("#lastdate").val()  != $("#lastModified").val()){
+              //alert("개설학과 및 개설과목 정보가 변경됨에 따라 새로고침 합니다.\n데이터가 정상적으로 보이지 않을 경우 해당 메뉴를 다시 클릭하여 주시기 바랍니다.");
+              $("#lastdate").val(data);
+              isLoad = false;
+              location.reload();
+            }else{
+              isLoad = true;
+            }
+          },
+          beforeSend: function() {
+            //통신을 시작할때 처리
+            //$('#loading').show().fadeIn('fast');
+          },
+          complete: function() {
+            //통신이 완료된 후 처리
+            //$('#loading').hide();
+          }
+        });
+      }
+      function logout(){
+        parent.parent.logout();
+      }
+      function reloadDataPage(){
+        location.reload();
+      }
+    </script>
+</head>
+
+<body bgColor="#F3F3F3">
+<form name="coreForm">
+    <input type="text"  id="lastdate" name="lastdate">
+    <input type="text" id="lastModified" name="lastModified">
+</form>
+</body>
+</html>

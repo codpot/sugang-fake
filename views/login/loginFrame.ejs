@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+
+    <!-- 호환성보기로 인해 디자인 깨짐 방지 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+
+    <link href="/resources/css/ui-blue.css" rel="stylesheet" type="text/css">
+
+    <script src="/resources/js/jquery-1.12.4.min.js" type="text/javascript"></script>
+    <script src="/resources/js/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="/resources/js/jquery.jqGrid.js" type="text/javascript"></script>
+    <script src="/resources/js/project-ui.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      var context = "";
+
+
+      $(function() {
+        // 탭체크를 여기함
+        try{
+          parent.getToken();
+        }catch(err){
+          location.href = context+ "/login?attribute=loginTab";
+        }
+      });
+
+    </script>
+</head>
+<!-- <frameset rows="0,*" cols="*" frameborder="no" border="0" framespacing="0"> -->
+<frameset rows="*" cols="*" frameborder="no" border="0" framespacing="0">
+    <!-- 1. 로그인 화면 로드시 개설과목 js는 호출하지 않도록 수정 <frame src="/core?attribute=coreData_ko&loginYn=N&lang=ko" name="coreData" id="coreData" scrolling="No" noresize="noresize" /> -->
+    <frame src="/login?attribute=loginMain&lang=ko&loginYn=N&schedule_cd=hakbu" name="coreMain" id="coreMain" />
+</frameset>
+</html>

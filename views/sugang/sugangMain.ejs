@@ -1,0 +1,959 @@
+<div class="content-panel">
+    <!-- 탭 -->
+    <div id="tab">
+        <ul>
+            <li><a href="#tabs-1">수강희망과목</a></li>
+            <li><a href="#tabs-2">개설강좌검색</a></li>
+        </ul>
+
+        <!-- S: 희망과목 -->
+        <div id="tabs-1">
+            <div class="sw-header">
+                <h2>수강희망과목</h2>
+                <div class="buttonset">
+                    <span class="item" id="meta_2">총 조회건수<em>0</em>건</span>
+                    <button type="button" class="btn-icon" onClick="fnRefreshB();extendTimer();">
+                        <i class="icon-refresh"></i>
+                        <span>새로고침</span>
+                    </button>
+                </div>
+            </div>
+            <div class="wrap-grid" id="divGrid1">
+                <table id="gridBasket"></table>
+                <div class="info-text">
+                    <p>희망과목 정원 및 잔여인원은 조회하는 시점 기준 인원으로 실시간 변동되므로, <em>'새로고침'</em> 또는 <em>'수강신청'</em> 재클릭시 조회 인원은 달라질 수 있습니다.</p>
+                </div>
+            </div>
+            <div class="bar-control"><span class="btn-control" title="펼치기" id="contol1"></span></div>
+        </div>
+        <!-- E: 희망과목 -->
+
+        <!-- S: 검색조건 -->
+        <div id="tabs-2">
+            <div class="pnl-search">
+                <table>
+                    <colgroup>
+                        <col width="60px;"> 	<!-- 대학 -->
+                        <col width="15%"> 		<!-- 대학 -->
+                        <col width="80px;"> 	<!-- 학과 -->
+                        <col width="15%"> 		<!-- 학과 -->
+                        <col width="80px;">  	<!-- 강좌명 -->
+                        <col width="15%"> 		<!-- 강좌명 -->
+                        <col width="100px;">  	<!-- 언어구분 -->
+                        <col width="15%">
+                    </colgroup>
+                    <form name="form" id="form">
+                        <input type="hidden" id="menu" name="menu" value="1" />
+                        <input type="hidden" id="lecture_cd" name="lecture_cd" value="" />
+                        <input type="hidden" id="search_div" name="search_div" value="S" />
+                        <input type="hidden" id="p_year" name="p_year" value="9999" />
+                        <input type="hidden" id="p_term" name="p_term" value="10" />
+                        <input type="hidden" name="p_graduate" id="p_graduate" value="H" />	<!--  H : 학부 ,  D : 대학원 -->
+                        <tr>
+                            <th id="hide4">대학</th>
+                            <td>
+                                <select name="p_daehak" id="p_daehak" onChange="initMajorCombo();this.blur();" style="width:100%">
+                                    <option value="">Loading...</option>
+                                </select>
+                            </td>
+                            <th id="hide5">학과</th>
+                            <td>
+                                <select name="p_major" id="p_major" onChange="initSbjtTeach();this.blur();" style="width:100%">
+                                    <option value="">Loading...</option>
+                                </select>
+                            </td>
+                            <th id="hide6">강좌명</th>
+                            <td>
+                                <input type="text" name="p_subjt" id="p_subjt" size="15" onFocus="chgSubjt();" onkeydown="if(event.keyCode == 13) return false;" placeholder="검색어 (Search Word)" />
+                            </td>
+                            <th id="hide10">언어구분</th>
+                            <td>
+                                <select name="p_lang" id="p_lang" style="width:100%">
+                                    <option value="">---- All ----</option>
+                                    <option value="1">영어</option>
+                                    <option value="2">영어(부분)</option>
+                                    <option value="3">제2외국어</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th id="hide7">요일</th>
+                            <td>
+                                <select name="p_day" id="p_day" onChange="chgDayTime();" style="width:100%">
+                                    <option value="">- All -</option>
+                                    <option value="2">월요일</option>
+                                    <option value="3">화요일</option>
+                                    <option value="4">수요일</option>
+                                    <option value="5">목요일</option>
+                                    <option value="6">금요일</option>
+                                    <option value="7">토요일</option>
+                                </select>
+                            </td>
+                            <th id="hide8">수업시간</th>
+                            <td>
+                                <select name="p_time" id="p_time" onChange="chgDayTime();" style="width:100%">
+                                    <option value="">- All -</option>
+                                    <option value="0900">09:00</option>
+                                    <option value="0930">09:30</option>
+                                    <option value="1000">10:00</option>
+                                    <option value="1030">10:30</option>
+                                    <option value="1100">11:00</option>
+                                    <option value="1130">11:30</option>
+                                    <option value="1200">12:00</option>
+                                    <option value="1230">12:30</option>
+                                    <option value="1300">13:00</option>
+                                    <option value="1330">13:30</option>
+                                    <option value="1400">14:00</option>
+                                    <option value="1430">14:30</option>
+                                    <option value="1500">15:00</option>
+                                    <option value="1530">15:30</option>
+                                    <option value="1600">16:00</option>
+                                    <option value="1630">16:30</option>
+                                    <option value="1700">17:00</option>
+                                    <option value="1730">17:30</option>
+                                    <option value="1800">18:00</option>
+                                    <option value="1825">18:25</option>
+                                    <option value="1850">18:50</option>
+                                    <option value="1900">19:00</option>
+                                    <option value="1915">19:15</option>
+                                    <option value="1930">19:30</option>
+                                    <option value="1940">19:40</option>
+                                    <option value="2005">20:05</option>
+                                    <option value="2030">20:30</option>
+                                    <option value="2035">20:35</option>
+                                    <option value="2055">20:55</option>
+                                    <option value="2100">21:00</option>
+                                    <option value="2120">21:20</option>
+                                    <option value="2125">21:25</option>
+                                    <option value="2145">21:45</option>
+                                    <option value="2150">21:50</option>
+                                </select>
+                            </td>
+                            <th id="hide9">교수명</th>
+                            <td>
+                                <input type="text" name="p_teach" id="p_teach" onFocus="chgTeach();" size="15" onkeydown="if(event.keyCode == 13) return false;" placeholder="검색어 (Search Word)" />
+                            </td>
+                            <th id="hide11">학수번호<br/>분반</th>
+                            <td>
+                                <input type="text" name="p_code" id="p_code" onFocus="chgCode();" size="15" onkeydown="if(event.keyCode == 13) return false;" placeholder="검색어 (Search Word)" />
+                            </td>
+                        </tr>
+                    </form>
+                </table>
+                <div class="buttonset">
+                    <button class="btn-search" onClick="javascript:gridLecture('Y');extendTimer();">조회</button>
+                </div>
+            </div>
+
+            <!-- S: 조회 그리드 -->
+            <div class="sw-header">
+                <h2>개설강좌 목록</h2>
+                <div class="buttonset">
+                    <span class="item" id="meta_1">총<em>0</em>건</span>
+                    <!-- <button type="button" class="btn-icon">
+                        <i class="icon-refresh"></i>
+                        <span>새로고침</span>
+                    </button> -->
+                </div>
+            </div>
+            <!-- E: 조회 그리드 -->
+            <div class="wrap-grid" id="divGrid2">
+                <table id="gridLecture"></table>
+                <div class="info-text">
+                    <p>이수구분 : 11 전공기초, 04 전공필수, 05 전공선택, 06 교직과, 14 중핵교과, 15 배분이수교과, 16 기초교과, 17 자유이수, 20 교직전선, 24 계절학기전공필수, 27 계절학기전공기초, 08 자유선택교과[배움학점제,군사학,취업스쿨,학점교류 과목등]</p>
+                </div>
+            </div>
+            <div class="bar-control"><span class="btn-control" title="펼치기" id="contol2"></span></div>
+        </div>
+        <!-- E: 검색조건 -->
+    </div>
+    <!-- //탭 -->
+
+    <!-- S: 수강신청 내역 -->
+    <div class="sw-header"><!-- mt-30 삭제 -->
+        <h2>수강신청 내역</h2>
+        <div class="buttonset">
+            <span class="item" id="meta_3">총 신청가능학점<em>0</em>학점</span>
+            <span class="item" id="meta_4">신청과목수<em>0</em>과목</span>
+            <span class="item" id="meta_5">신청학점<em>0</em>학점</span>
+            <!-- <button type="button" class="btn-icon" onclick="windowOpen(urlTimeTableSugang,'timeTable','1000', '800')">
+                    <i class="icon-schedule"></i>
+                    <span>시간표 보기</span>
+                </button> -->
+        </div>
+    </div>
+    <div class="wrap-grid">
+        <table id="gridSugang"></table>
+        <div class="info-text">
+            <p>이수구분 : 11 전공기초, 04 전공필수, 05 전공선택, 06 교직과, 14 중핵교과, 15 배분이수교과, 16 기초교과, 17 자유이수, 20 교직전선, 24 계절학기전공필수, 27 계절학기전공선택,  08 자유선택교과[배움학점제,군사학,취업스쿨,학점교류 과목등]</p>
+        </div>
+    </div>
+    <!-- E: 수강신청 내역 -->
+
+    <!-- S: 수강신청대기 내역 -->
+    <div class="sw-header" id="waitGridView_id" style="display:none;"><!-- mt-30 삭제 -->
+        <h2>수강대기 내역</h2>
+        <div class="buttonset">
+            <span class="item" id="meta_6">대기과목수<em>0</em>과목</span>
+            <span class="item" id="meta_7">현재 대기학점<em>0</em>학점</span>
+            <!-- <button type="button" class="btn-icon" onclick="windowOpen(urlTimeTableSugang,'timeTable','1000', '800')">
+                    <i class="icon-schedule"></i>
+                    <span>시간표 보기</span>
+                </button> -->
+        </div>
+    </div>
+    <div class="wrap-grid" id="waitGrid_id" style="display:none;">
+        <table id="gridWaitSugang"></table>
+        <!--<div class="info-text">
+            <p>대기관련 문구가 들어가면 좋습니다.</p>
+        </div> -->
+    </div>
+    <!-- E: 수강신청대기 내역 -->
+</div>
+
+<script type="text/javascript">
+  var DATA 		= parent.coreData;
+
+  $(document).ready(function(){
+    $("#tab").tabs({
+      activate: function( event, ui ){
+        var selectedTab = $("#tab").tabs('option', 'active');
+        if(selectedTab == 0){
+          gridBasket();
+        } else if(selectedTab == 1){
+          gridLecture('N');
+        }else{
+          alert("탭 메뉴를 알 수 없습니다.");
+          return;
+        }
+        // 사이즈 조절
+        setGridWidth("gridSugang");
+        parent.coreData.dateCheck(); // 데이터 체크
+        if( parent.coreData.isLoad == false ){
+          alert("개설학과 및 개설과목 정보가 변경됨에 따라 메인화면으로 이동합니다.");
+          location.reload();
+        }
+      }
+    });
+
+    parent.coreData.dateCheck(); // 데이터 체크
+    if( parent.coreData.isLoad == false ){
+      alert("개설학과 및 개설과목 정보가 변경됨에 따라 메인화면으로 이동합니다.");
+      location.reload();
+    }
+
+    setTimeout(function(){initDaehakCombo();},100);
+    setTimeout(function(){initMajorCombo();},100);
+    gridLecture('N');
+    gridBasket();
+    gridSugang();
+    // 처음에 대기 카운트가 있는지 확인
+    goCheckWaitCnt();
+
+    extendTimer();
+
+    // S: 접기 이벤트
+    $("#contol1").click(function(){
+      if($(this).hasClass("active")){
+        $(this).removeClass("active").attr("title", "접기");
+        $("#divGrid1").slideDown();
+        $("#gridSugang").jqGrid("setGridHeight", 300);
+        $("#gridWaitSugang").jqGrid("setGridHeight", 150);
+      }  else{
+        $(this).addClass("active").attr("title", "펼치기");
+        $("#divGrid1").slideUp("slow");
+        $("#gridSugang").jqGrid("setGridHeight", 300);
+        $("#gridWaitSugang").jqGrid("setGridHeight", 150);
+      }
+      setGridWidth("gridSugang");
+      setGridWidth("gridWaitSugang");
+    });
+    $("#contol2").click(function(){
+      if($(this).hasClass("active")){
+        $(this).removeClass("active").attr("title", "접기");
+        $("#divGrid2").slideDown();
+        $("#gridSugang").jqGrid("setGridHeight", 300);
+        $("#gridWaitSugang").jqGrid("setGridHeight", 150);
+      }  else{
+        $(this).addClass("active").attr("title", "펼치기");
+        $("#divGrid2").slideUp("slow");
+        $("#gridSugang").jqGrid("setGridHeight", 300);
+        $("#gridWaitSugang").jqGrid("setGridHeight", 150);
+      }
+      setGridWidth("gridSugang");
+      setGridWidth("gridWaitSugang");
+    });
+    // E: 접기 이벤트
+  });
+
+  // 대기자 카운트가 있는지 체크
+  // 있다면, 대기자 그리드를 보여주며, 없으면 대기자 그리드를 보여주지 않게 처리
+  function goCheckWaitCnt(){
+    var cnt = 0;
+
+    $.ajax({
+      type: "POST",
+      /*dataType:"json",*/
+      url: urlWaitCntJson +"&fake=" + new Date(),
+      data:{},
+      async:false,
+      success: function(data) {
+        var obj = jQuery.parseJSON(data).rows;
+        for (var i=0; i<obj.length; i++) {
+          cnt = obj[i].cnt*1;
+        }
+        // 대기 건수가 있다면 해당 화면을 보여준다.
+        if( cnt > 0 ){
+          $("#waitGridView_id").show();
+          $("#waitGrid_id").show();
+          gridWaitSugang();
+        }else{
+          $("#waitGridView_id").hide();
+          $("#waitGrid_id").hide();
+        }
+      },
+      beforeSend:function(){
+
+      },
+      error: function(req, status, error){
+        alert("code:"+req.status+"\n"+"message:"+req.responseText+"\n"+"error:"+error);
+        return cnt;
+      }
+    });
+  }
+  function initDaehakCombo(){
+    var p_year 			= $("#p_year").val();
+    var p_term 			= $("#p_term").val();
+    var js_daehak_data 	= eval("DATA.daehak_"+p_year+p_term+".rows");
+
+    $("#p_daehak").empty();
+
+    var _html = "";
+
+    if( js_daehak_data.length > 0 ){
+      for(var i=0; i<js_daehak_data.length; i++){
+        if( js_daehak_data[i].up == "A10081" ){
+          if( js_daehak_data[i].cd == "A07340" ){
+            _html += "<option value=\""+js_daehak_data[i].cd+"\" selected \>"+js_daehak_data[i].nm+"</option>";
+          }else{
+            _html += "<option value=\""+js_daehak_data[i].cd+"\" \>"+js_daehak_data[i].nm+"</option>";
+          }
+        }
+      }
+    }else{
+      _html += "<option value=''>데이터로드실패</option>";
+    }
+    $("#p_daehak").append( _html );
+  }
+  function initMajorCombo(){
+    var p_year 			= $("#p_year").val();
+    var p_term 			= $("#p_term").val();
+    var p_daehak 		= $("#p_daehak").val();
+    var js_major_data 	= eval("DATA.major_"+p_year+p_term+".rows");
+
+    $("#p_major").empty();
+
+    var _html = "";
+    if( js_major_data.length > 0 ){
+      for(var i=0; i<js_major_data.length; i++){
+        if( js_major_data[i].dh == p_daehak){
+          if( js_major_data[i].cd == "A07333" ){
+            _html += "<option value=\""+js_major_data[i].cd+"\" selected \>"+js_major_data[i].nm+"</option>";
+          }else{
+            _html += "<option value=\""+js_major_data[i].cd+"\" \>"+js_major_data[i].nm+"</option>";
+          }
+        }
+      }
+    }else{
+      _html += "<option value=''>데이터로드실패</option>";
+    }
+    $("#p_major").append( _html );
+  }
+  //강좌 및 교수 정보 갱신
+  function initSbjtTeach(){
+    $("#p_subjt").val("");
+    $("#p_teach").val("");
+  }
+  //강좌명 변경했을 경우
+  function chgSubjt(){
+    $("#p_teach").val("");
+    $("#p_day").val("");
+    $("#p_time").val("");
+    $("#p_code").val("");
+  }
+  //교수 변경했을 경우
+  function chgTeach(){
+    $("#p_subjt").val("");
+    $("#p_day").val("");
+    $("#p_time").val("");
+    $("#p_code").val("");
+  }
+  // 요일 시간 변경했을 경우
+  function chgDayTime(){
+    $("#p_teach").val("");
+    $("#p_subjt").val("");
+    $("#p_code").val("");
+  }
+  // 학수번호를 선택했을 경우
+  function chgCode(){
+    $("#p_subjt").val("");
+    $("#p_teach").val("");
+    $("#p_day").val("");
+    $("#p_time").val("");
+    $("#p_lang").val("");
+  }
+  function gridLecture(initYn) {
+    //var p_height 		= initGetGridHeight("gridLecture", menu_id, selectedTab, openInfo);	// 화면비율에 맞춘 초기 height
+    var p_height 		= "400px";
+    var menu 			= $("#menu").val(); // 선택메뉴
+    var search_div		= 	$("#search_div").val();
+    var p_day			= 	$("#p_day").val();
+    var p_time			= 	$("#p_time").val();
+    var p_teach			= 	$("#p_teach").val();
+    var p_subjt			= 	$("#p_subjt").val();
+    var p_major			= 	$("#p_major").val();
+    var p_lang			= 	$("#p_lang").val();
+    var p_year			= 	$("#p_year").val();
+    var p_term			= 	$("#p_term").val();
+    var lecture_cd		=   $("#p_code").val();
+
+    if( !$("#p_code").val("")){
+      // 학수번호가 7자리 미만일 경우
+      if( $("#p_code").length < 6 && $("#p_code").length > 0 ){
+        $("#p_code").focus();
+        msgAlert("학수번호는 6자리 이상입니다!");
+        return;
+      }
+    }
+    // 조회할 때는 search_div값을 T로 보내서 해당 과목별 교수/시간표를 쪼개라.
+    var url	= urlLectListJson+"&menu="+menu+"&search_div="+search_div+"&p_day="+p_day+"&p_time="+p_time+"&p_teach="+p_teach+"&p_subjt="+p_subjt+"&p_major="+p_major+"&p_lang="+p_lang+"&p_year="+p_year+"&p_term="+p_term;
+    url = url+"&lecture_cd="+lecture_cd+"&initYn="+initYn;
+    //lecture_cd = replaceAll(document.form.p_code.value.toUpperCase(),"-",""); 자바에서 변경처리
+    $("#p_code").val("");
+
+    $("#gridLecture").GridUnload();
+    var formData = $("#form").serialize();
+
+    $("#gridLecture").jqGrid({
+      url : encodeURI( url ), // 익스일 경우 한글명 깨질 수 있음
+      datatype: "json",
+      //data:formData,
+      colModel: [
+        {label:"수강신청", name:"mode", id:"mode", width:"100",align:"center",formatter:function(cellvalue, options, row){
+            return '<button type="button" class="sm btn-main">신청</button>';
+          }}
+        ,{label:"학수번호-분반", name:"lecture_cd_disp", id:"lecture_cd_disp", width:"120", align:"center",sortable:true, firstsortorder:"desc",formatter:function(cellVal, options, row){
+            $("#jqgh_gridLecture_lecture_cd_disp > .s-ico").show();
+            return row.lecture_cd_disp;
+          }}
+        ,{label:"강좌명", name:"subjt_name", id:"subjt_name", width:"250", align:"left",sortable:true, firstsortorder:"desc",formatter:function(cellVal, options, row){
+            $("#jqgh_gridLecture_subjt_name > .s-ico").show();
+            return row.subjt_name;
+          }}
+        ,{label:"대상학년", name:"lect_grade", id:"lect_grade", width:"80", align:"center",sortable:true, firstsortorder:"desc",formatter:function(cellVal, options, row){
+            $("#jqgh_gridLecture_lect_grade > .s-ico").show();
+            return row.lect_grade;
+          }}
+        ,{label:"정원", name:"asign_pcnt", id:"asign_pcnt", width:"80",align:"center"}
+        ,{label:"잔여인원", name:"remain", id:"remain", width:"80",align:"center"}
+        ,{label:"신청가능시간", name:"delay_dt", id:"delay_dt", width:"150",align:"center"}
+        ,{label:"교수명", name:"teach_na", id:"teach_na", width:"120",align:"center"}
+        ,{label:"학점", name:"unit_num", id:"unit_num", width:"80",align:"center"}
+        ,{label:"강의시간/강의실", name:"timetable", id:"timetable", width:"250",align:"left"}
+        ,{label:"이수구분", name:"field_gb", id:"field_gb", width:"80",align:"center"}
+        ,{label:"언어구분", name:"eng_yn_nm", id:"eng_yn_nm", width:"120",align:"center"}
+        ,{label:"특이사항", name:"bigo", id:"bigo", width:"160",align:"center"}
+        ,{label:"params", name:"params", id:"params", hidden:true}
+      ],
+      height: p_height,
+      //width:"auto",		// 화면에 맞춘다. autowidth와 같이 사용못함
+      autowidth:true,		// 화면에 맞춘다. - 세로 강제 스크롤 하려면 이거 주석
+      shrinkToFit: false,  // 컬럼이 그리드 width에 맞춰 자동으로 맞춰질지 여부 - 스크롤바 생기는지 여부
+      altRows: true,		// 커서를 맞추면
+      //sortname: "name",
+      gridview: true,
+      rownumbers: true,   //각 row 의 맨 앞줄에 각 row 의 번호가 자동으로 부여된다.
+      rownumWidth: 40,
+      rowNum: -1,
+      //loadui : 'block',
+      loadtext : "Loading ...",
+      cmTemplate: {sortable:false}, // sort를 못하도록
+      sortorder   : 'asc',
+      // sort icon click event
+      onSortCol: function (index, idxcol, sortorder) {
+      },
+      onCellSelect:function(rowid,iCol,cellcontent,e){
+        var cm 			= $(this).jqGrid('getGridParam', 'colModel');
+        var colName 	= cm[iCol];
+        var rowData  	= $(this).jqGrid('getRowData', rowid);
+        var lec_nm 		= rowData.subjt_name;
+        var params 		= rowData.params;
+
+        if(colName['name'] == 'mode' && $(e.target).is(":button") ){
+          // 토큰체크
+          var token;
+          try{
+            token = top.getToken();
+          }catch(Exception){
+            logout("잘못된 URL호출입니다.\n\n로그아웃 됩니다.");
+            return;
+          }
+          var status = rowData.mode.replace(/(<([^>]+)>)/ig,"");
+          if( status != "완료" ){
+            goMode(lec_nm, params, rowid, "insert", "N");
+          }
+        }
+      },
+      loadBeforeSend:function(){
+        //$(".wrap-loader").show();
+      },
+      loadComplete: function(data) {
+        var isValid = gridCheck(data, $(this));
+        if(isValid){
+          //$(".wrap-loader").hide();
+          getCredit($(this),'meta_1');
+          if( initYn == "N" ){
+            setNodata($(this),"조회조건을 선택 후 조회버튼을 클릭하여 조회해주세요");
+          }else{
+            setNodata($(this),"데이터가 존재하지 않습니다.");
+          }
+        }
+        // Size 제어
+        setGridWidth("gridLecture");
+      },
+      loadError: function (jqXHR, textStatus, errorThrown) {
+        alert(jqXHR.responseText);
+        //alert('HTTP status code: ' + jqXHR.status + '\n' + 'textStatus: ' + textStatus + '\n' + 'errorThrown: ' + errorThrown);
+        //console.log('HTTP message body (jqXHR.responseText): ' + '\n' + jqXHR.responseText);
+        //jQuery("#grid").html("Type: "+ textStatus +"; Response: "+ jqXHR.status + " " + jqXHR.statusText);
+      }
+    });
+    $(window).bind('resize', function() {
+      setGridWidth("gridLecture");
+    }).trigger('resize');
+  }
+  function gridBasket() {
+    $("#gridBasket").GridUnload();
+    //var p_height 	= initGetGridHeight("gridBasket", menu_id, selectedTab, openInfo);	// 화면비율에 맞춘 초기 height
+    var p_height 		= "500px";
+    $("#gridBasket").jqGrid({
+      url : urlSugangBasketListJson,
+      datatype: "json",
+      colModel: [
+        {label:"수강신청", name:"mode", id:"mode", width:"100",align:"center",formatter:function(cellvalue, options, row){
+            if(row.sugang_yn == "Y"){
+              return "<span class='fc-red'>완료</span>";
+            }else{
+              return '<button type="button" class="sm btn-main">신청</button>';
+            }
+          }}
+        ,{label:"구분", name:"gubun_nm", id:"gubun_nm", width:"100",align:"center"}
+        ,{label:"학수번호-분반", name:"lecture_cd_disp", id:"lecture_cd_disp", width:"100",align:"center"}
+        ,{label:"강좌명", name:"subjt_name", id:"subjt_name", width:"250",align:"left"}
+        ,{label:"대상학년", name:"lect_grade", id:"lect_grade", width:"60",align:"center"}
+        ,{label:"정원", name:"asign_pcnt", id:"asign_pcnt", width:"60",align:"center"}
+        ,{label:"잔여인원", name:"remain", id:"remain", width:"60",align:"center"}
+        ,{label:"신청가능시간", name:"delay_dt", id:"delay_dt", width:"120",align:"center"}
+        ,{label:"교수명", name:"teach_na", id:"teach_na", width:"120",align:"center"}
+        ,{label:"학점", name:"unit_num", id:"unit_num", width:"60",align:"center"}
+        ,{label:"강의시간/강의실", name:"timetable", id:"timetable", width:"250",align:"left"}
+        ,{label:"이수구분", name:"field_gb", id:"field_gb", width:"60",align:"center"}
+        ,{label:"언어구분", name:"eng_yn_nm", id:"eng_yn_nm", width:"120",align:"center"}
+        ,{label:"재수강여부", name:"again_yn", id:"again_yn", width:"80",align:"center"}
+        ,{label:"비고", name:"del_yn", id:"del_yn", width:"150",align:"center"}
+        ,{label:"수강여부", name:"sugang_yn", id:"sugang_yn", hidden:true}
+        ,{label:"구분", name:"atnlc_input_se_code", id:"atnlc_input_se_code", hidden:true}
+        ,{label:"params", name:"params", id:"params", hidden:true}
+      ],
+      //width:"auto",		// 화면에 맞춘다. autowidth와 같이 사용못함
+      height: p_height,
+      autowidth:true,		// 화면에 맞춘다.
+      shrinkToFit: false,  // 컬럼이 그리드 width에 맞춰 자동으로 맞춰질지 여부 - 스크롤바 생기는지 여부
+      altRows: true,		// 커서를 맞추면
+      //sortname: "lectname",
+      gridview: true,
+      //loadui : 'block',
+      loadtext : "Loading ...",
+      rownumbers: true,
+      rownumWidth: 40,
+      rowNum: -1,
+      cmTemplate: {sortable:false}, // sort를 못하도록
+      onCellSelect:function(rowid,iCol,cellcontent,e){
+        var cm 			= $(this).jqGrid('getGridParam', 'colModel');
+        var colName 	= cm[iCol];
+        var rowData  	= $(this).jqGrid('getRowData', rowid);
+        var lec_nm 		= rowData.subjt_name;
+        var sugang_yn 	= rowData.sugang_yn;
+        var params 		= rowData.params;
+
+        if(colName['name'] == 'mode' && $(e.target).is(":button") ){
+          // 토큰체크
+          var token;
+          try{
+            token = top.getToken();
+          }catch(Exception){
+            logout("잘못된 URL호출입니다.\n\n로그아웃 됩니다.");
+            return;
+          }
+          var status = rowData.mode.replace(/(<([^>]+)>)/ig,"");
+          if( status != "완료" ){
+            goMode(lec_nm, params, rowid, "insert", "N");
+          }
+        }
+      },
+      loadComplete: function(data) {
+        var isValid = gridCheck(data, $(this));
+        if(isValid){
+          setNodata($(this),"수강희망과목 내역이 없습니다.");
+          getCredit($(this),'meta_2');
+        }
+
+        var rowIDs = $(this).jqGrid('getDataIDs');
+        for (var i = 0; i < rowIDs.length ; i++){
+          var rowID = rowIDs[i];
+          var rowData = $(this).jqGrid ('getRowData', rowID);
+          // 예비과목 tr 색주기
+          if(rowData.atnlc_input_se_code == "2"){
+            $(this).find("tbody").find("tr").eq(rowID).css("background-color","#e1f4c3");
+          }
+          $(this).jqGrid('setRowData', rowID,rowData);
+        }
+        // Size 제어
+        setGridWidth("gridBasket");
+      }
+    });
+    $(window).bind('resize', function() {
+      setGridWidth("gridBasket");
+    }).trigger('resize');
+  }
+  function gridSugang() {
+    $("#gridSugang").GridUnload();
+    //var p_height 	= initGetGridHeight("gridSugang", menu_id, selectedTab, openInfo);	// 화면비율에 맞춘 초기 height
+    var p_height 		= "300px";
+    $("#gridSugang").jqGrid({
+      url : urlSugangListJson,
+      datatype: "json",
+      colModel: [
+        {label:"수강삭제", name:"mode", id:"mode", width:"100",align:"center",formatter:function(cellvalue, options, row){
+            return '<button type="button" class="sm btn-del">삭제</button>';
+          }}
+        ,{label:"학수번호-분반", name:"lecture_cd_disp", id:"lecture_cd_disp", width:"120",align:"center"}
+        ,{label:"강좌명", name:"subjt_name", id:"subjt_name", width:"250",align:"left"}
+        ,{label:"대상학년", name:"lect_grade", id:"lect_grade", width:"100",align:"center"}
+        ,{label:"교수명", name:"teach_na", id:"teach_na", width:"150", align:"center"}
+        ,{label:"학점", name:"unit_num", id:"unit_num", width:"100",align:"center"}
+        ,{label:"강의시간/강의실", name:"timetable", id:"timetable", width:"250",align:"left"}
+        ,{label:"이수구분", name:"field_gb", id:"field_gb", width:"100",align:"center"}
+        ,{label:"언어구분", name:"eng_yn_nm", id:"eng_yn_nm", width:"150",align:"center"}
+        ,{label:"재수강여부", name:"again_yn", id:"again_yn", width:"100",align:"center"}
+        ,{label:"비고", name:"del_yn", id:"del_yn", width:"150",align:"center"}
+        ,{label:"params", name:"params", id:"params", hidden:true}
+      ],
+      //width:"auto",		// 화면에 맞춘다. autowidth와 같이 사용못함
+      height:p_height,
+      autowidth:true,		// 화면에 맞춘다. - 세로 강제 스크롤 하려면 이거 주석
+      //shrinkToFit: false,  // 컬럼이 그리드 width에 맞춰 자동으로 맞춰질지 여부 - 스크롤바 생기는지 여부
+      altRows: true,		// 커서를 맞추면
+      //sortname: "lectname",
+      gridview: true,
+      //loadui : 'block',
+      loadtext : "Loading ...",
+      rownumbers: true,
+      rownumWidth: 40,
+      rowNum: -1,
+      cmTemplate: {sortable:false}, // sort를 못하도록
+      onCellSelect:function(rowid,iCol,cellcontent,e){
+        var cm 		 = $(this).jqGrid('getGridParam', 'colModel');
+        var colName  = cm[iCol];
+        var rowData  = $(this).jqGrid('getRowData', rowid);
+        var lec_nm = rowData.subjt_name;
+        var params = rowData.params;
+
+        if(colName['name'] == 'mode' && $(e.target).is(":button")){
+          // 토큰체크
+          var token;
+          try{
+            token = top.getToken();
+          }catch(Exception){
+            logout("잘못된 URL호출입니다.\n\n로그아웃 됩니다.");
+            return;
+          }
+          goMode(lec_nm, params, rowid, "delete", "N");
+        }
+      },
+      loadComplete: function(data) {
+        var isValid = gridCheck(data, $(this));
+        if(isValid){
+          setNodata($(this),"수강신청 내역이 없습니다.");
+          getCredit($(this),'meta_3');
+          getCredit($(this),'meta_4');
+          getCredit($(this),'meta_5');
+        }
+        // Size 제어
+        setGridWidth("gridSugang");
+      }
+    });
+    $(window).bind('resize', function() {
+      setGridWidth("gridSugang");
+    }).trigger('resize');
+  }
+  function gridWaitSugang() {
+    $("#gridWaitSugang").GridUnload();
+    //var p_height 	= initGetGridHeight("gridWaitSugang", menu_id, selectedTab, openInfo);	// 화면비율에 맞춘 초기 height
+    var p_height 		= "150px";
+    $("#gridWaitSugang").jqGrid({
+      url : urlSugangWaitListJson,
+      datatype: "json",
+      colModel: [
+        {label:"대기삭제", name:"mode", id:"mode", width:"100",align:"center",formatter:function(cellvalue, options, row){
+            return '<button type="button" class="sm btn-del">삭제</button>';
+          }}
+        ,{label:"대기순번", name:"wait_nm", id:"wait_nm", width:"120",align:"center"}
+        ,{label:"학수번호-분반", name:"lecture_cd_disp", id:"lecture_cd_disp", width:"120",align:"center"}
+        ,{label:"강좌명", name:"subjt_name", id:"subjt_name", width:"250",align:"left"}
+        ,{label:"대상학년", name:"lect_grade", id:"lect_grade", width:"100",align:"center"}
+        ,{label:"교수명", name:"teach_na", id:"teach_na", width:"100", align:"center"}
+        ,{label:"학점", name:"unit_num", id:"unit_num", width:"100",align:"center"}
+        ,{label:"강의시간/강의실", name:"timetable", id:"timetable", width:"250",align:"left"}
+        ,{label:"이수구분", name:"field_gb", id:"field_gb", width:"100",align:"center"}
+        ,{label:"언어구분", name:"eng_yn_nm", id:"eng_yn_nm", width:"120",align:"center"}
+        ,{label:"재수강여부", name:"again_yn", id:"again_yn", width:"100",align:"center"}
+        ,{label:"비고", name:"del_yn", id:"del_yn", width:"150",align:"center"}
+        ,{label:"params", name:"params", id:"params", hidden:true}
+      ],
+      //width:"auto",		// 화면에 맞춘다. autowidth와 같이 사용못함
+      height:p_height,
+      autowidth:true,		// 화면에 맞춘다. - 세로 강제 스크롤 하려면 이거 주석
+      //shrinkToFit: false,  // 컬럼이 그리드 width에 맞춰 자동으로 맞춰질지 여부 - 스크롤바 생기는지 여부
+      altRows: true,		// 커서를 맞추면
+      //sortname: "lectname",
+      gridview: true,
+      //loadui : 'block',
+      loadtext : "Loading ...",
+      rownumbers: true,
+      rownumWidth: 40,
+      rowNum: -1,
+      cmTemplate: {sortable:false}, // sort를 못하도록
+      onCellSelect:function(rowid,iCol,cellcontent,e){
+        var cm 		 = $(this).jqGrid('getGridParam', 'colModel');
+        var colName  = cm[iCol];
+        var rowData  = $(this).jqGrid('getRowData', rowid);
+        var lec_nm = rowData.subjt_name;
+        var params = rowData.params;
+
+        if(colName['name'] == 'mode' && $(e.target).is(":button")){
+          // 토큰체크
+          var token;
+          try{
+            token = top.getToken();
+          }catch(Exception){
+            logout("잘못된 URL호출입니다.\n\n로그아웃 됩니다.");
+            return;
+          }
+          goMode(lec_nm, params, rowid, "delete", "N");
+        }
+      },
+      loadComplete: function(data) {
+        var isValid = gridCheck(data, $(this));
+        if(isValid){
+          setNodata($(this),"수강신청 대기내역이 없습니다.");
+          getCredit($(this),'meta_6');
+          getCredit($(this),'meta_7');
+        }
+        // Size 제어
+        setGridWidth("gridWaitSugang");
+      }
+    });
+    $(window).bind('resize', function() {
+      setGridWidth("gridWaitSugang");
+    }).trigger('resize');
+  }
+  function gridCheck(data, grid){
+    try{
+      var code = data.code || data.rows[0].code;
+      var msg = data.msg || data.rows[0].msg;
+      if(code == "999"){
+        logout(msg);
+        return false;
+      }else if(code == "500"){
+        setNodata(grid, msg);
+        //msgAlert(msg);
+        return false;
+      }
+    }catch(err){
+    }
+    return true;
+  }
+  function getCredit(grid, gbn){
+    var maxPnt = "21";
+    var rowIDs = grid.jqGrid('getDataIDs');
+    var suHakjum_huimang 	= 0;
+    var suCnt_huimang	 	= 0;
+    var suHakjum_yebi 	 	= 0;
+    var suCnt_yebi	 	 	= 0;
+    var suHakjum 			= 0;
+    var suCnt	 			= 0;
+    var count 			 	= rowIDs.length;
+    for (var i = 0; i < count ; i++){
+      var rowID = rowIDs[i];
+      var rowData = grid.jqGrid ('getRowData', rowID);
+      // 희망과목
+      if( rowData.atnlc_input_se_code == "1" ){
+        suHakjum_huimang += parseFloat(rowData.unit_num);
+        suCnt_huimang++;
+        // 예비과목
+      }else if( rowData.atnlc_input_se_code == "2" ){
+        suHakjum_yebi += parseFloat(rowData.unit_num);
+        suCnt_yebi++;
+      }
+      suHakjum += parseFloat(rowData.unit_num);
+      suCnt++;
+    }
+    if(gbn == 'meta_1'){
+      $("#meta_1").html("총 조회건수<em>"+suCnt+"</em>건");
+    }else if(gbn == 'meta_2'){
+      $("#meta_2").html("총 조회건수<em>"+suCnt+"</em>건");
+    }else if(gbn == 'meta_3'){
+      $("#meta_3").html("총 신청가능학점<em>"+maxPnt+"</em>학점");
+    }else if(gbn == 'meta_4'){
+      $("#meta_4").html("신청과목수<em>"+suCnt+"</em>과목");
+    }else if(gbn == 'meta_5'){
+      $("#meta_5").html("신청학점<em>"+suHakjum+"</em>학점");
+    }else if(gbn == 'meta_6'){
+      $("#meta_6").html("대기과목수<em>"+suCnt+"</em>과목");
+    }else if(gbn == 'meta_7'){
+      $("#meta_7").html("대기학점<em>"+suHakjum+"</em>학점");
+    }else if(gbn == 'meta_b_1'){
+      $("#meta_b_1").html("희망과목[ 신청과목수<em>"+suCnt_huimang+"</em>과목 | 신청학점<em>"+suHakjum_huimang+"</em>학점 ]");
+    }else if(gbn == 'meta_b_2'){
+      $("#meta_b_2").html("예비과목[ 신청과목수<em>"+suCnt_yebi+"</em>과목 | 신청학점<em>"+suHakjum_yebi+"</em>학점 ]");
+    }
+  }
+  function goMode(lec_nm, params, rowid, mode, retake_yn){
+    if(mode == "insert"){
+      okMode(lec_nm, params, rowid, mode, retake_yn);
+    }else if(mode == "delete"){
+      msgConfirm(lec_nm, params, rowid, mode, "ko");
+    }else{
+      alert("비정상적인 호출입니다.");
+      return;
+    }
+  }
+  function okMode( lec_nm, params, rowid, mode, retake_yn, reSugang_key, ticket ){
+    var menu = $("#menu").val(); // 선택메뉴
+    $("#retake").dialog();
+    if($("#retake").dialog("isOpen")){
+      $("#retake").dialog("close");
+    }
+    extendTimer();
+
+    $.ajax({
+      type: "POST",
+      url: urlSugangMode +"&mode="+mode+"&fake="+Date.now(),
+      data:{params:params, retake_yn:retake_yn, reSugang_key:reSugang_key, ticket:ticket},
+      async:false,
+      success: function(data) {
+        var tmp = eval("("+data+")");
+        var code = tmp.code;
+        var msg  = tmp.msg;
+
+        if(code == "511"){
+          logout(msg);
+        }else if(code == "MACRO"){
+          macroChk(params, rowid, mode, msg);
+        }else if(code == "201" || code == "301"){
+          if(confirm("이미 이수한 과목입니다\r학점 재수강 신청을 원하시면 확인을, 아니면 취소를 선택하세요!!\r재수강시 기취득한 성적은 삭제됩니다.")){
+            reTake(params, rowid, code);
+          }
+        }else if(code == "200"){
+          if(mode == 'insert'){
+            //msgAlertRandom(msg);
+            msgAlert(tmp.msg);
+          }else{
+            msgAlert(msg);
+          }
+          var selectedTab = $("#tab").tabs('option', 'active');
+          if(selectedTab == 0 && mode == "insert"){
+            btnChange(params, mode);
+          }else if(selectedTab == 0 && mode == "delete"){
+            $("#gridBasket").trigger("reloadGrid");
+          }
+          // 대기자가 있는지 체크하여 화면 보이게 처리
+          goCheckWaitCnt();
+          $("#gridSugang").trigger("reloadGrid");
+        }else{
+          msgAlert(tmp.msg);
+          return;
+        }
+      },
+      error: function(req, status, error){
+        alert("code:"+req.status+"\n"+"message:"+req.responseText+"\n"+"error:"+error);
+      }
+    });
+    extendTimer();
+  }
+  function btnChange(str, mode){
+    //var res = str.split("@");
+    //params = res[0]+"-"+res[1];
+    var ids = $("#gridBasket").getDataIDs();
+    // Grid Data Get!
+    $.each(ids,function(idx, rowID){
+      rowData = $("#gridBasket").getRowData(rowID);
+      if (rowData.params == str) {
+        if(mode == 'insert'){
+          rowData.mode = "<span class='fc-red'>수강완료</span>";
+          rowData.sugang_yn = "Y";
+        }else if(mode == 'delete'){
+          rowData.mode = '<button type="button" class="sm btn-main">신청</button>';
+          rowData.sugang_yn = "N";
+        }
+        $('#gridBasket').jqGrid('setRowData', rowID,rowData);
+      }
+    });
+  }
+  function macroChk(params, rowid, mode, ticket, reSugang_key){
+    $("#secNumber").val("");
+    $("#macro").dialog({
+      resizable: false,
+      width: 570,
+      height: 320,
+      modal: true,
+      closeOnEscape: false,
+      resizable: false,
+      draggable: true,
+      beforeClose: function() {
+        $(".ui-dialog-titlebar-close").show();
+        //$(this).empty();
+      },
+      open: function(event, ui) {
+        //$(".ui-dialog-titlebar-close", $(this).parent()).hide(); 닫기버튼 감추기
+        $("#secNumber").focus();
+        $('#macro').load(urlSugangMacro, {params:params, rowid:rowid, mode:mode, ticket:ticket, reSugang_key:reSugang_key, fake:Date.now()}, function() {
+          $("#secNumber").focus()
+          imgInit();
+          initSize();// 화면 사이즈를 작게 했을 경우 입력 화면이 보이도록 조절
+        });
+      }
+    });// end dialog
+  }
+  function reTake(params, rowid, code){
+    $( "#retake" ).dialog({
+      resizable: false,
+      width: 1024,
+      height: 300,
+      modal: true,
+      closeOnEscape: false,
+      resizable: false,
+      beforeClose: function() {
+        $(this).empty();
+      },
+      open: function(event, ui) {
+        $('#retake').load(urlRetakeList, {params:params,rowid:rowid,code:code,fake:Date.now(),menuType:"hakbu"}, function() {
+        });
+      }
+    });
+  }
+  function fnRefreshB(){
+    $("#gridBasket").trigger("reloadGrid");
+  }
+</script>

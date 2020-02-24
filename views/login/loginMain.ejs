@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>경희대학교 수강신청시스템</title>
+
+
+
+
+    <!-- 호환성보기로 인해 디자인 깨짐 방지 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+
+    <link href="/resources/css/ui-blue.css" rel="stylesheet" type="text/css">
+
+    <script src="/resources/js/jquery-1.12.4.min.js" type="text/javascript"></script>
+    <script src="/resources/js/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="/resources/js/jquery.jqGrid.js" type="text/javascript"></script>
+    <script src="/resources/js/project-ui.js" type="text/javascript"></script>
+    <style>
+        /* 상단 탭 간격 줄이기 */
+        .content-panel {
+            padding: 25px;
+            padding-top: 15px;
+            box-sizing: border-box;
+        }
+    </style>
+    <script type="text/javascript">
+      var context 				= "";
+      var lang    				= "ko";
+      var schedule_cd				= "hakbu";
+
+      //menu
+      var urlLoginContents		= context+"/login?attribute=loginContents"+"&lang="+lang+"&schedule_cd="+schedule_cd+"&fake="+Date.now();
+      var urlCoreNotice			= context+"/core?attribute=coreNotice_"+lang+"&loginYn=N&lang="+lang+"&fake="+Date.now();
+      //조회
+      var urlCoreLectureList		= context+"/core?attribute=coreLectureList&lang="+lang+"&loginYn=N&fake="+Date.now();
+      //json
+      var urlLectListJson			= context+"/core?attribute=lectListJson&lang="+lang+"&loginYn=N&fake="+Date.now();
+
+      $(document).ready(function() {
+        $('.wrap-loader').fadeOut();
+
+        // onload되면 로그인 컨텐츠 내용 강제 로드
+        fnLoad(urlLoginContents,'');
+
+        $(".control-down").click(function(){
+          var last = $(".wrap-menu ul > li:last-child").offset();
+          var height = $(".wrap-menu").height();
+          $(".control-up").addClass("active");
+          if(height-last.top < -100){
+            $(".control-down").addClass("active");
+            $(".wrap-menu ul").animate( {"top": -(last.top-height)+"px"}, 500, "linear" );
+          }
+          else {
+            $(".control-down").removeClass("active");
+          }
+        });
+        $(".control-up").click(function(){
+          $(".control-down").addClass("active");
+          var offset = $(".wrap-menu ul > li:first-child").offset();
+          if(offset.top < 110){
+            $(".control-up").removeClass("active");
+            $(".wrap-menu ul").animate( {"top": "0"}, 500, "linear" );
+          }
+          else{
+            $(".control-up").removeClass("active");
+          }
+        });
+        $(".wrap-menu ul > li").click(function(){
+          $(this).addClass("active").siblings().removeClass("active");
+        });
+
+        // 메뉴바 접기/펴기 추가
+        // class명 수정
+        $(".control").click(function(){
+          if($(this).hasClass("is-opened")){
+            $("body").addClass("nav-closed");
+            $(this).removeClass("is-opened").addClass("is-closed").attr("title","메뉴열기");
+            setGridWidth("gridLecture");
+            setGridWidth("gridBasket");
+            setGridWidth("gridSugang");
+            setGridWidth("gridWaitSugang");
+          } else{
+            $("body").removeClass("nav-closed");
+            $(this).removeClass("is-closed").addClass("is-opened").attr("title","메뉴닫기");
+            setGridWidth("gridLecture");
+            setGridWidth("gridBasket");
+            setGridWidth("gridSugang");
+            setGridWidth("gridWaitSugang");
+          }
+        });
+
+        //Top 버튼
+        $('.to-top').click(function(){
+          $('.container').animate({scrollTop : 0},500);
+          return false;
+        });
+        $('.container').scroll(function() {
+          //Top 버튼
+          if ($(this).scrollTop() > 100) {
+            $('.to-top').fadeIn("fast");
+          } else {
+            $('.to-top').fadeOut("fast");
+          }
+        });
+      });
+      function fnLoad(_url, active){
+        $('.wrap-loader').fadeIn();
+
+        $(".wrap-menu ul > li").removeClass("active");
+        $(active).addClass("active");
+
+        $(".contents").load(_url, function() {
+          $('.wrap-loader').fadeOut();
+        });
+      }
+      function fnLogin( schedule_cd ){
+        if( schedule_cd != "" ){
+          //msgAlert("로그인이 필요한 서비스입니다.");
+          alert("로그인이 필요한 서비스입니다.\n로그인 화면으로 이동합니다.");
+          top.location.href = location.protocol+"//sugang-fake.khunet.net/";
+        }else{
+          top.location.href = location.protocol+"//sugang-fake.khunet.net/";
+        }
+      }
+      //=========================== S: 각종키 제한 ====================== //
+      function noKeyCheck(){
+        if (event.keyCode == 116) {
+          msgAlert("F5키를 사용 할 수 없습니다.");
+          event.preventDefault();
+          return false;
+        } else if(event.ctrlKey && (event.keyCode == 78 || event.keyCode == 82)) {
+          return false;
+          // 엔터키, 스페이스 키 막기 - 엔터키는 허용( 로그인 페이지에서만 )
+          //} else if (event.keyCode === 13 || event.keyCode === 32) {
+        } else if (event.keyCode === 32) {
+          msgAlert("매크로 방지를 위해 스페이스바 키는 사용하실 수 없습니다.");
+          event.preventDefault();
+          return false;
+        }
+      }
+      $(document).on("contextmenu",function(e){
+        //alert("매크로 방지를 위해 마우스 오른클릭은 사용하실 수 없습니다.");
+        return false;
+      });
+      document.onkeydown = noKeyCheck;
+      //=========================== E: 각종키 제한 ====================== //
+    </script>
+</head>
+<form name="formMain" id="formMain" method="post">
+    <input type="hidden" id="lang" name="lang" value="ko">
+</form>
+<body class="main">
+<div class="wrap-loader" style="display:none;"><span class="loading-helper"></span><div class="loader"></div><div class="loading-text">Loading</div></div>
+
+<span class="to-top"></span>
+
+<div class="header-login">
+    <div class="control is-opened" title="메뉴닫기"></div>
+    <div title="경희대학교 수강신청시스템">
+        <img src="/resources/img/login/logo2.png">
+    </div>
+</div>
+
+<div class="container">
+    <div class="contents"></div>
+    <div id="message" title="알림(notice)" style="display:none;z-index:2;">
+        <p class="alert-warning"><span id="msg"></span></p>
+    </div>
+    <div id="retake" title="재수강 대상 과목조회" style="display:none;"></div>
+    <div id="macro" title="매크로 방지용 키입력" style="display:none;"></div>
+    <div id="switDialog" title="착오자 내역" style="display:none;"></div>
+    <!-- <div class="footer">
+        <div>
+            서울캠퍼스 02447 서울특별시 동대문구 경희대로 26  l  국제캠퍼스 17104 경기도 용인시 기흥구 덕영대로 1732  l  광릉캠퍼스 12001 경기도 남양주시 진접읍 광릉수목원로 195<br>
+            COPYRIGHT © KYUNG HEE UNIVERSITY. ALL RIGHT RESERVED.
+        </div>
+    </div> -->
+</div>
+
+<div class="nav login">
+    <div class="login" onClick="fnLogin('');" style="cursor:pointer">로그인</div>
+    <!-- 위로가기 주석처리 <div class="control-up"></div> -->
+    <div class="wrap-menu">
+        <ul>
+            <li class="notice" onclick="fnLoad(urlCoreNotice,'this');">
+                <img src="/resources/img/layout/icon-notice.png">
+                <span class="menu-kor">공지사항</span>
+            </li>
+            <li onclick="alert('기능 미구현');">
+                <img src="/resources/img/layout/icon-planning.png">
+                <span class="menu-kor">종합시간표 조회</span>
+            </li>
+
+            <li onclick="alert('기능 미구현');">
+                <img src="/resources/img/layout/icon-subject.png">
+                <span class="menu-kor">희망과목내역</span>
+            </li>
+
+            <li onclick="alert('기능 미구현');">
+                <img src="/resources/img/layout/icon-search.png">
+                <span class="menu-kor">수강신청내역</span>
+            </li>
+
+            <!--
+            <li onclick="fnLogin('hakbu');">
+                <img src="/resources/img/layout/icon-search.png">
+                <span class="menu-kor">포인트내역</span>
+            </li>
+            -->
+
+
+            <li class="registration" onclick="fnLogin('hakbu');">
+                <img src="/resources/img/layout/icon-registration.png">
+                <span class="menu-kor">수강신청</span>
+            </li>
+            <!--
+            <li class="registration" onclick="fnLoad(urlSugangPointMain,'this');">
+                <img src="/resources/img/layout/icon-registration.png">
+                <span class="menu-kor">포인트배분</span>
+            </li>
+            -->
+
+        </ul>
+    </div>
+    <!-- 아래로가기 주석처리 <div class="control-down active"></div> -->
+
+</div>
+</body>
+</html>

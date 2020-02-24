@@ -1,0 +1,361 @@
+<script type="text/javascript">
+  var context = "";
+  var lang    = "ko";
+
+  $(function() {
+    $('.wrap-loader').fadeOut();
+
+    /* loginFrame에서 탭 체크
+    try{
+        parent.getToken();
+    }catch(err){
+        location.href = context+ "/login?attribute=loginTab";
+    }*/
+    $('#id').keypress(function(event){
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        goLogin();
+        return false;
+      }
+    });
+    $('#id').keyup(function(event){
+      if( $("#schedule_cd").val() == "hakbu" || $("#schedule_cd").val() == "wish" || $("#schedule_cd").val() == "sess" ){
+        if( $('#id').val().length > 9 ){
+          $("#pwd").focus();
+        }
+      }
+    });
+    $('#pwd').keypress(function(event){
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        goLogin();
+        return false;
+      }
+    });
+    $("#btn_login").click(function() {
+      goLogin();
+    });
+
+    $("input[name=lang]").click(function(){
+      var lang = $("input[name=lang]:checked").val();
+      if( lang == "en" ){
+        $('.wrap-loader').fadeIn();
+        location.href = context + "/login?attribute=loginFrame"+"&lang="+lang+"&schedule_cd="+$("#schedule_cd").val()+"&chgSelectYn=Y";
+      }
+    });
+
+    //브라우저 체크
+    funBrowserCheck();
+  });
+
+  function goLogin(){
+    var id 	= $("#id");
+    var pwd = $("#pwd");
+
+    if(id.val() == ""){
+      msgAlert("학번 또는 수험번호를 입력하세요.", objFocus);
+      return;
+    }
+    if(pwd.val() == ""){
+      msgAlert("비밀번호를 입력하세요.", objFocus);
+      return;
+    }
+    onSucess();
+  }
+  function onSucess(){
+    var formData = $("#form").serialize();
+
+    $('.wrap-loader').fadeIn();
+
+    $.ajax({
+      type: "POST",
+      url: context+"/login?attribute=loginChk&lang="+lang+"&fake="+Date.now(),
+      data:formData,
+      async:false,
+      dataType : "jsonp",
+      jsonp : "callback",
+      success: function(data) {
+        //NetFunnel_Complete();
+        var tmp = data; //eval("("+data+")");
+        var code,msg;
+        var last_date,ip_addr;
+        try{
+          code 	= tmp.code;
+          msg 	= tmp.msg;
+        }catch(err){
+          tmp 	= eval("("+data+")");
+          code 	= tmp.code;
+          msg 	= tmp.msg;
+        }
+
+        $('.wrap-loader').fadeOut();
+
+        if(tmp.code == "200" || tmp.code == "201" || tmp.code == "300" || tmp.code == "301" || tmp.code == "NOTICE"){
+          if( tmp.code == "201" && $("#schedule_cd").val() == "hakbu"){
+            last_date 	= tmp.last_date;
+            ip_addr 	= tmp.ip_addr;
+            alert(msg + "\n\n☞ 이전접속시간 :"+last_date+"\n☞ 이전접속IP :"+ip_addr);
+          }else if(tmp.code == "201" || tmp.code == "300" || tmp.code == "301" || tmp.code == "NOTICE"){
+            alert(msg);
+          }
+          top.setToken(tmp.token);
+          // LoginMain화면에서 던져라!!!.
+          document.formMain.action = context + "/core?attribute=coreFrame_"+lang+"&fake="+Date.now();
+          document.formMain.submit();
+        }else if(code == "reload"){
+          location.reload();
+        }else{
+          msgAlert(msg);
+          return;
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrown){
+        //NetFunnel_Complete();
+        var code,msg;
+        if(jqXHR.status == "200"){
+          var tmp = JSON.parse(jqXHR.responseText);
+          code 	= tmp.code;
+          msg 	= tmp.msg;
+        }else{
+          code 	= jqXHR.status;
+          msg 	= jqXHR.statusText;
+        }
+        msgAlert(msg);
+        $('.wrap-loader').fadeOut();
+      }
+    });
+  }
+  var objFocus = function (){
+    $("#id").val() == "" ? $("#id").focus() : $("#pwd").focus();
+  }
+  //-----------------------------------------------------------------------------------
+  //ID 찾기
+  //-----------------------------------------------------------------------------------
+  function findID(){
+    var h = 700;
+    var w = 1100;
+    var winl = (screen.width - w) / 2;
+    var wint = (screen.height - h) / 2;
+    winprops = 'height='+h+',width='+w+',top='+wint+',left='+winl+',titlebar=no,location=no,directories=no,menubar=no';
+
+    url     = "https://info21.khu.ac.kr/com/SsoCtr/executeNiceId.do?flag=findId&fake=" + Date.now() ;
+    win = window.open(url,"find",winprops);
+    if(parseInt(navigator.appVersion) >= 4 ) { win.window.focus(); }
+  }
+  //-----------------------------------------------------------------------------------
+  //비밀번호 찾기
+  //-----------------------------------------------------------------------------------
+  function findPwd(){
+    var h = 700;
+    var w = 1100;
+    var winl = (screen.width - w) / 2;
+    var wint = (screen.height - h) / 2;
+    winprops = 'height='+h+',width='+w+',top='+wint+',left='+winl+',titlebar=no,location=no,directories=no,menubar=no';
+
+    url     = "https://info21.khu.ac.kr/com/SsoCtr/executeNiceId.do?flag=findPswd&fake=" + Date.now() ;
+    win = window.open(url,"find",winprops);
+    if(parseInt(navigator.appVersion) >= 4 ) { win.window.focus(); }
+  }
+  //-----------------------------------------------------------------------------------
+  //최초사용자 비밀번호 등록
+  //-----------------------------------------------------------------------------------
+  function firstPw(){
+    var h = 800;
+    var w = 1100;
+    var winl = (screen.width - w) / 2;
+    var wint = (screen.height - h) / 2;
+    winprops = 'height='+h+',width='+w+',top=0,left=0,scrollbars=yes,status=no,resizable=no,menubar=no';
+
+    url     = "https://info21.khu.ac.kr/com/SsoCtr/initPageWork.do?loginSeValue=first";
+    //                + "?fake=" + Date.now() ;
+    win = window.open(url,"find",winprops);
+    if(parseInt(navigator.appVersion) >= 4 ) { win.window.focus(); }
+  }
+  //브라우져 버젼
+  function funGetInternetVersion(ver)
+  {
+    var rv = -1; // Return value assumes failure.
+    var ua = navigator.userAgent;
+    var re = null;
+    if(ver == "MSIE"){
+      re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+    }else{
+      re = new RegExp(ver+"/([0-9]{1,}[\.0-9]{0,})");
+    }
+
+    if (re.exec(ua) != null){
+      rv = parseFloat(RegExp.$1);
+    }
+    return rv;
+  }
+  function funBrowserCheck(){
+    // 브라우저 및 버전을 구하기 위한 변수들.
+    //'use strict';
+    var agent = navigator.userAgent.toLowerCase(),
+      name = navigator.appName,
+      browser = "oooo";
+
+    // MS 계열 브라우저를 구분하기 위함.
+    if(name === 'Microsoft Internet Explorer' || agent.indexOf('trident') > -1 || agent.indexOf('edge/') > -1) {
+      browser = 'ie';
+      if(name === 'Microsoft Internet Explorer') { // IE old version (IE 10 or Lower)
+        agent = /msie ([0-9]{1,}[\.0-9]{0,})/.exec(agent);
+        browser += parseInt(agent[1]);
+      } else { // IE 11+
+        if(agent.indexOf('trident') > -1) { // IE 11
+          browser += 11;
+        } else if(agent.indexOf('edge/') > -1) { // Edge
+          browser = 'edge';
+        }
+      }
+    }
+    /*else if(agent.indexOf('safari') > -1) { // Chrome or Safari
+        if(agent.indexOf('opr') > -1) { // Opera
+            browser = 'opera';
+        } else if(agent.indexOf('chrome') > -1) { // Chrome
+            browser = 'chrome';
+        } else { // Safari
+            browser = 'safari';
+        }
+    } else if(agent.indexOf('firefox') > -1) { // Firefox
+        browser = 'firefox';
+    }*/
+
+    /*if( browser.indexOf("ie") != -1 ){
+        alert("Explorer 사용 시 호환성 보기를 해제 하셔야 합니다.\n\r도구-호환성보기설정-'knsu.ac.kr' 제거\n\r또는, F12-브라우저 모드-호환성 보기 제거");
+    }*/
+    //browser_nm = browser;
+
+    var version  = "";
+    if( browser != ""){
+      //version = browser.replace(/[^0-9]/g,"");
+      version = browser.substr(2,4);
+    }
+    if((1*version) < 11 ){
+      alert("Internet Explorer 11이하에서는 정상 작동하지 않을 수 있습니다.");
+    }
+  }
+  function downLoadMenual(gbn){
+    if( gbn == "w" || gbn == "m" ){
+      window.open( context + "/resources/manual/sugang_"+gbn+"_manual.pdf", '_blank'); // 새탭으로 띄우기
+    }else{
+      alert("구분자를 알수 없습니다.");
+      return;
+    }
+  }
+  function fnReload(){
+    location.href = context + "/login?attribute=loginFrame"+"&lang="+lang+"&schedule_cd="+$("#schedule_cd").val()+"&chgSelectYn=Y";
+  }
+  function goNotice( gbn ){
+    fnLoad(urlCoreNotice+"&schedule_cd="+gbn,'.notice');
+  }
+</script>
+
+<form name="form" id="form" method="post">
+    <input type="hidden" id="lang" name="lang" value="ko">
+    <div class="wrap-login">
+        <div>
+            <div class="login-box">
+                <div class="wrap-lang">
+                    <input type="radio" id="radio1" name="lang" value="ko" checked><label for="radio1">Korean</label>
+                    <input type="radio" id="radio2" name="lang" value="en" disabled><label for="radio2">English</label>
+                </div>
+                <select id="schedule_cd" name="schedule_cd" onChange="fnReload();" disabled>
+                    <option value="hakbu"  selected >학부 수강신청</option>
+                </select>
+                <input type="text" class="input-id" id="id" name="id" placeholder="학번 ( Student ID )">
+                <input type="password" class="input-pw" id="pwd" name="pwd" placeholder="비밀번호 ( Password )">
+                <button type="button" class="btn-login" id="btn_login">로그인</button>
+                <button type="button" class="btn-login-sub" onClick="alert('기능 미구현');" >최초 사용자 비밀번호 등록</button>
+
+                <div class="text-btn">
+                    <span onClick="alert('기능 미구현');">ID찾기 </span>
+                    <span onClick="alert('기능 미구현');">비밀번호 찾기 </span>
+                </div>
+                <div class="manual">
+                    <p onClick="alert('기능 미구현');">
+                        <i class="manual-pc"></i>
+                        <span class="manual-text">PC용 매뉴얼 </span>
+                    </p>
+                    <p onClick="alert('기능 미구현');">
+                        <i class="manual-mobile"></i>
+                        <span class="manual-text">모바일용 매뉴얼 </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="login-contents">
+    <div>
+        <h1>수강신청 일정<small>Course Registration Schedule</small></h1>
+        <div class="wrap-schedule">
+            <div>
+                <h2>학부 수강신청<small>Undergraduate</small></h2>
+                <div class="schedule">
+                    <p>
+                        학부 수강 안내 <br/> Course Registration
+                        <span class="btn-more" onClick="alert('기능 미구현');"></span>
+                    </p>
+                    <div class="time">
+                        <span>0000/00/00 00:00:00</span>
+                        <!-- <span class="unit">-</span><span>2019.05.13  17:00</span> -->
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h2>희망과목 수강신청<small>WishList</small></h2>
+                <div class="schedule">
+                    <p>
+                        희망과목 수강 안내 <br/> WishList Course Registration
+                        <span class="btn-more" onClick="alert('기능 미구현');"></span>
+                    </p>
+                    <div class="time">
+                        <span>0000/00/00 00:00:00</span>
+                        <!-- <span class="unit">-</span><span>2019.05.13  17:00</span> -->
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h2>계절학기 수강신청<small>Summer/Winter</small></h2>
+                <div class="schedule">
+                    <p>
+                        계절학기 수강 안내 <br/> Summer/Winter Course Registration
+                        <span class="btn-more" onClick="alert('기능 미구현');"></span>
+                    </p>
+                    <div class="time">
+                        <span>0000/00/00 00:00:00</span>
+                        <!-- <span class="unit">-</span><span>2019.05.13  17:00</span> -->
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h2>대학원 수강신청<small>Graduate school</small></h2>
+                <div class="schedule">
+                    <p>
+                        대학원 수강 안내<br/>  Graduate Course Registration
+                        <span class="btn-more" onClick="alert('기능 미구현');"></span>
+                    </p>
+                    <div class="time">
+                        <span>0000/00/00 00:00:00</span>
+                        <!-- <span class="unit">-</span><span>2019.05.13  17:00</span> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h1>공지사항<small>Notice</small></h1>
+        <div class="wrap-notice">
+            <div>
+                <p>경희대학교 수강신청 비공식 연습 시스템</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <div>
+        서울캠퍼스 02447 서울특별시 동대문구 경희대로 26  l  국제캠퍼스 17104 경기도 용인시 기흥구 덕영대로 1732  l  광릉캠퍼스 12001 경기도 남양주시 진접읍 광릉수목원로 195<br>
+        COPYRIGHT © KYUNG HEE UNIVERSITY. ALL RIGHT RESERVED.
+    </div>
+</div>

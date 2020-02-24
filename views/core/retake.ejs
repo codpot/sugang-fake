@@ -1,0 +1,66 @@
+<script language="JavaScript">
+  $(document).ready(function(){
+    extendTimer();
+  });
+
+  function doSave(){
+    /*if(!confirm(msg)){
+        return;
+    }*/
+    //okMode(lec_nm, params, rowid, mode, retake_yn, reSugang_key, ticket )
+    okMode('','A00000@RET12301@RET123@04@3.0','1','insert', 'Y', '201','');
+  }
+  function closeDialog(){
+    $("#retake").dialog("close");
+  }
+</script>
+<br/>
+<table align="center" style="width:100%;">
+    <tr>
+        <td align="center">
+            <table class="tbl-view" style="width:98%;">
+                <colgroup>
+                    <col width="5%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="12%">
+                    <col />
+                    <col width="7%">
+                    <col width="7%">
+                    <col width="7%">
+                    <col width="8%">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>이수년도</th>
+                    <th>이수학기</th>
+                    <th>학수번호</th>
+                    <th>과목명</th>
+                    <th>학점</th>
+                    <th>취득점수</th>
+                    <th>평점</th>
+                    <th>신청</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr>
+                    <td class="alignC">1</td>
+                    <td class="alignC">0000</td>
+                    <td class="alignC">0학기</td>
+                    <td class="alignC">RET12301</td>
+                    <td class="alignC">재수강 연습</td>
+                    <td class="alignC">3</td>
+                    <td class="alignC">0</td>
+                    <td class="alignC">F</td>
+                    <td class="alignC">
+                        <button type="button" class="sm btn-main" onClick="doSave();">신청</button>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </td>
+    </tr>
+</table>

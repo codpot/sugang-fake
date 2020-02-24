@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>경희대학교 수강신청시스템</title>
+
+
+
+
+    <!-- 호환성보기로 인해 디자인 깨짐 방지 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+
+    <link href="/resources/css/ui-blue.css" rel="stylesheet" type="text/css">
+
+    <script src="/resources/js/jquery-1.12.4.min.js" type="text/javascript"></script>
+    <script src="/resources/js/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="/resources/js/jquery.jqGrid.js" type="text/javascript"></script>
+    <script src="/resources/js/project-ui.js" type="text/javascript"></script>
+    <style>
+        /* 상단 탭 간격 줄이기 */
+        .content-panel {
+            padding: 25px;
+            padding-top: 15px;
+            box-sizing: border-box;
+        }
+        /* 익스플로어일 경우 로그아웃 버튼이 없어지는 현상에 따른 수정 */
+        .main .header .is-right>span {
+            position: relative;
+            float: left;
+            width: 32px;
+            height: 100%;
+            margin: 0 15px;
+            background: no-repeat center center;
+            opacity: .8;
+            cursor: pointer;
+        }
+        .main .header .is-right>span:before {
+            content: "";
+            display: inline-block;
+            position: relative;
+            top: 23px;
+            left: -16px;
+            width: 1px;
+            height: 13px;
+            background: #e8e8e8;
+        }
+    </style>
+    <script type="text/javascript">
+      var context 				= "";
+      var lang   					= "ko";
+
+      // menu
+      var urlLogout				= context+"/core?attribute=logOut&lang="+lang+"&fake="+Date.now();
+      var urlCoreFrame			= context+"/core?attribute=coreFrame_"+lang+"&fake="+Date.now();
+      var urlCoreNotice			= context+"/core?attribute=coreNotice_"+lang+"&fake="+Date.now();
+      // 조회
+      var urlCoreLectureList		= context+"/core?attribute=coreLectureList&lang="+lang+"&fake="+Date.now();
+      var urlCoreBasektList		= context+"/core?attribute=coreBasketList&lang="+lang+"&fake="+Date.now();
+      var urlCoreSugnagList		= context+"/core?attribute=coreSugangList&lang="+lang+"&fake="+Date.now();
+      var urlCorePointList		= context+"/core?attribute=corePointList&lang="+lang+"&fake="+Date.now();
+      // 메인
+      var urlSugangMain			= context+"/sugang?attribute=sugangMain&lang="+lang+"&fake="+Date.now();
+      var urlSugangPointMain		= context+"/sugang?attribute=sugangPointMain&lang="+lang+"&fake="+Date.now();
+      var urlBasketMain			= context+"/basket?attribute=basketMain&lang="+lang+"&fake="+Date.now();
+      var urlSeasonMain			= context+"/season?attribute=seasonMain&lang="+lang+"&fake="+Date.now();
+      var urlGradMain				= context+"/grad?attribute=gradMain&lang="+lang+"&fake="+Date.now();
+      var urlAdMain				= context+"/admin?attribute=adMain&lang="+lang+"&fake="+Date.now();
+      // json
+      var urlLectListJson			= context + "/core?attribute=lectListJson&lang="+lang+"&fake="+Date.now();
+      var urlBasketListJson		= context + "/basket?attribute=basketListJson&lang="+lang+"&fake="+Date.now();
+      var urlSugangBasketListJson	= context + "/sugang?attribute=sugangBasketListJson&lang="+lang+"&fake="+Date.now();
+      var urlSugangListJson		= context + "/sugang?attribute=sugangListJson&lang="+lang+"&fake="+Date.now();
+      var urlSugangWaitListJson	= context + "/sugang?attribute=sugangWaitListJson&lang="+lang+"&fake="+Date.now();
+      var urlPointListJson		= context + "/sugang?attribute=sugangPointListJson&lang="+lang+"&fake="+Date.now();
+      var urlSeasonListJson		= context + "/season?attribute=seasonListJson&lang="+lang+"&fake="+Date.now();
+      var urlGradListJson			= context + "/grad?attribute=gradListJson&lang="+lang+"&fake="+Date.now();
+      var urlWaitCntJson			= context + "/sugang?attribute=waitCntJson&lang="+lang+"&fake="+Date.now();
+      // 재수강
+      var urlRetakeList			= context + "/core?attribute=retake&lang="+lang+"&fake="+Date.now();
+      // 매크로
+      var urlSugangMacro			= context + "/sugang?attribute=macro&lang="+lang+"&fake="+Date.now();
+      var urlSugangMacroImg		= context + "/sugang?attribute=macro_img&lang="+lang+"&fake="+Date.now();
+      var urlSugangMacroJson		= context + "/sugang?attribute=macro_json&lang="+lang+"&fake="+Date.now();
+      // 저장
+      var urlBasketMode			= context + "/basket?attribute=basketMode&lang="+lang+"&fake="+Date.now();
+      var urlSugangMode			= context + "/sugang?attribute=sugangMode&lang="+lang+"&fake="+Date.now();
+      var urlSeasonMode			= context + "/season?attribute=seasonMode&lang="+lang+"&fake="+Date.now();
+      var urlGradMode				= context + "/grad?attribute=gradMode&lang="+lang+"&fake="+Date.now();
+      // 시간표
+      var urlTimeTableBasket		= context + "/core?attribute=timeTablePopup&lang="+lang+"&menuType=wish&fake="+Date.now();
+      var urlTimeTableSugang		= context + "/core?attribute=timeTablePopup&lang="+lang+"&menuType=hakbu&fake="+Date.now();
+      var urlTimeTableSeason		= context + "/core?attribute=timeTablePopup&lang="+lang+"&menuType=sess&fake="+Date.now();
+      var urlTimeTableGrad		= context + "/core?attribute=timeTablePopup&lang="+lang+"&menuType=grad&fake="+Date.now();
+      //남은시간
+      var tcounter;
+      var myTimer;
+      var screenWidth  = screen.availWidth;
+      var screenHeight = screen.availHeight;
+
+      //window.onLoad와 동일
+      $(function() {
+        // onload되면 공지사항을 무조건 열어라
+        fnLoad(urlCoreNotice,'.notice');
+        //parent.coreData.dateCheck(); // 데이터 체크
+        extendTimer();
+        fnStatus(); // 학생 상태창 강제 보이기
+
+        $('.wrap-loader').fadeOut();
+
+        $(".control-down").click(function(){
+          var last = $(".wrap-menu ul > li:last-child").offset();
+          var height = $(".wrap-menu").height();
+          $(".control-up").addClass("active");
+          if(height-last.top < -100){
+            $(".control-down").addClass("active");
+            $(".wrap-menu ul").animate( {"top": -(last.top-height)+"px"}, 500, "linear" );
+          }
+          else {
+            $(".control-down").removeClass("active");
+          }
+        });
+        $(".control-up").click(function(){
+          $(".control-down").addClass("active");
+          var offset = $(".wrap-menu ul > li:first-child").offset();
+          if(offset.top < 110){
+            $(".control-up").removeClass("active");
+            $(".wrap-menu ul").animate( {"top": "0"}, 500, "linear" );
+          }
+          else{
+            $(".control-up").removeClass("active");
+          }
+        });
+        $(".wrap-menu ul > li").click(function(){
+          $(this).addClass("active").siblings().removeClass("active");
+        });
+        $(".nav > .myinfo").click(function(){
+          if($(".nav-layer.layerinfo").is(":visible")){
+            $(".nav-layer.layerinfo").css("display","none");
+          } else{
+            $(".nav-layer").css("display","none");
+            $(".nav-layer.layerinfo").css("display","block");
+          }
+        });
+        $(document).click(function(e) {
+          if ($(e.target).closest(".nav > .myinfo, li.notice, li.notification, li.registration, .nav-layer, span.btn-delete").length === 0) {
+            $(".nav-layer").css("display","none");
+            $("li.notification, li.registration").removeClass("active");
+          }
+        });
+
+        // 메뉴바 접기/펴기 추가
+        // class명 수정
+        $(".control").click(function(){
+          if($(this).hasClass("is-opened")){
+            $("body").addClass("nav-closed");
+            $(this).removeClass("is-opened").addClass("is-closed").attr("title","메뉴열기");
+            setGridWidth("gridLecture");
+            setGridWidth("gridBasket");
+            setGridWidth("gridSugang");
+            setGridWidth("gridWaitSugang");
+          } else{
+            $("body").removeClass("nav-closed");
+            $(this).removeClass("is-closed").addClass("is-opened").attr("title","메뉴닫기");
+            setGridWidth("gridLecture");
+            setGridWidth("gridBasket");
+            setGridWidth("gridSugang");
+            setGridWidth("gridWaitSugang");
+          }
+        });
+
+        //Top 버튼
+        $('.to-top').click(function(){
+          $('.container').animate({scrollTop : 0},500);
+          return false;
+        });
+        $('.container').scroll(function() {
+          //Top 버튼
+          if ($(this).scrollTop() > 100) {
+            $('.to-top').fadeIn("fast");
+          } else {
+            $('.to-top').fadeOut("fast");
+          }
+        });
+      });
+      function fnLoad(_url, active){
+        //$('.wrap-loader').fadeIn();
+
+        $(".wrap-menu ul > li").removeClass("active");
+        $(active).addClass("active");
+        $(".contents").load(_url, function() {
+          //$('.wrap-loader').fadeOut();
+        });
+        extendTimer();
+        // 학생 상태창 없애기
+        $(".nav-layer.layerinfo").css("display","none");
+      }
+      //=========================== 세션시간 연장 ====================== //
+      function tstart(){ //초기 설정함수
+        tcounter	= 600; //10분 설정
+        myTimer 	= setInterval(Timer,1000);
+      }
+      function Timer(){ //시간표및 조건검사
+        tcounter = tcounter - 1; //1초식 감소
+        temp	 = Math.floor(tcounter/60); // 분부분 두자리 계산 mm
+        if ( Math.floor(tcounter/60) < 10 ) { temp = '0'+temp; }
+        temp = temp + ":"; //mm:ss의 : 이부분추가
+        if ( (tcounter%60) < 10 ) { temp = temp + '0'; } //초부분 두자리 계산 ss
+        temp = temp + (tcounter%60);
+        // 시간출력
+        $("#timerRemain").text(temp);	// 시간출력
+        if(tcounter<0) timerStop(); 	// 3분후 완료
+      }
+      // 완료함수
+      function timerStop(){
+        var msg = "장시간 사용이 없어서 자동로그아웃 됩니다!.";
+        clearInterval(myTimer);
+        $("#timerRemain").text("00:00");	// 시간출력
+        logout(msg);
+      }
+      // 시간 연장하기
+      function extendTimer() {
+        // 타이머가 표시 되어 있으면
+        if($("#timerRemain")) {
+          // 빈페이지 호출
+          top.hiddenFrame.location.href = context + "/blank.html?fake="+Date.now();
+          clearInterval(myTimer);
+          $("#timerRemain").text("10:00");	// 시간출력
+          tstart();
+        }
+      }
+      //=========================== S: 각종키 제한 ====================== //
+      function noKeyCheck(){
+        if (event.keyCode == 116) {
+          alert("F5키를 사용 할 수 없습니다.");
+          event.preventDefault();
+          return false;
+        } else if(event.ctrlKey && (event.keyCode == 78 || event.keyCode == 82)) {
+          return false;
+          // 엔터키, 스페이스 키 막기
+        } else if (event.keyCode === 13 || event.keyCode === 32) {
+          alert("매크로 방지를 위해 엔터키와 스페이스바 키는 사용하실 수 없습니다.");
+          event.preventDefault();
+          return false;
+        }
+      }
+      $(document).on("contextmenu",function(e){
+        //alert("매크로 방지를 위해 마우스 오른클릭은 사용하실 수 없습니다.");
+        return false;
+      });
+      document.onkeydown = noKeyCheck;
+      //=========================== E: 각종키 제한 ====================== //
+
+      //=========================== S: 해상도조정 ====================== //
+      var scale = 1;
+      function initScope(){
+        var availWidth  = screen.availWidth;
+        var availHeight = screen.availHeight;
+
+        if( availWidth <= 1366 || availWidth <= 1440 ){
+          scale = 0.7;
+          $("#scope_id").text("70%");
+          msgAlert("해당 PC의 해상도는 "+availWidth+"px * "+availHeight+"px 입니다.\n최적의 해상도가 아니므로 화면 배율을 70%로 변경합니다.\n원치 않으시면 화면배율 +/-로 변경하시기 바랍니다.");
+          zooms('Y');
+        }else if( availWidth <= 1600 || availWidth <= 1680  ) {
+          scale = 0.8;
+          $("#scope_id").text("80%");
+          msgAlert("해당 PC의 해상도는 "+availWidth+"px * "+availHeight+"px 입니다.\n최적의 해상도가 아니므로 화면 배율을 80%로 변경합니다.\n원치 않으시면 화면배율 +/-로 변경하시기 바랍니다.");
+          zooms('Y');
+        }else if( availWidth <= 1768 ) {
+          scale = 0.9;
+          $("#scope_id").text("90%");
+          msgAlert("해당 PC의 해상도는 "+availWidth+"px * "+availHeight+"px 입니다.\n최적의 해상도가 아니므로 화면 배율을 90%로 변경합니다.\n원치 않으시면 화면배율 +/-로 변경하시기 바랍니다.");
+          zooms('Y');
+        }else{
+          scale = 1;
+          $("#scope_id").text("100%");
+          zooms('Y');
+        }
+      }
+      //화면크기축소
+      function zoomOut(){
+        scale = scale - 0.1;
+        if(scale <= 0.7) scale = 0.7;            //화면크기 최대 축소율 70%
+        zooms('N');
+      }
+      //화면크기확대
+      function zoomIn(){
+        scale =  scale + 0.1;
+        if(scale >= 2) scale = 2;          //화면크기 최대 확대율 200%
+        zooms('N');
+      }
+      //원래 화면크기로 되돌아가기
+      function zoomReset(){
+        scale	= 1;
+        zooms('N');
+      }
+      function zooms(init_yn){
+        document.body.style.zoom = scale;
+        document.body.style.MozTransform = 'scale('+scale+')'; // Mozilla(firefox)
+        document.body.style.MozTransformOrigin = '0 0'; // Mozilla(firefox)
+
+        if( init_yn == "N" ){
+          if(Math.floor((scale*100)) == 70){
+            alert ("더 이상 축소할 수 없습니다.");      //화면 축소율이 70% 이하일 경우 경고창
+          }
+          if(Math.floor((scale*100)) == 200){
+            alert ("더 이상 확대할 수 없습니다.");      //화면 확대율이 200% 이상일 경우 경고창
+          }
+        }
+        $("#scope_id").text(Math.floor((scale*100)) +"%");
+        extendTimer();
+      }
+      //=========================== E: 해상도조정 ====================== //
+
+      //=========================== S: ETC ====================== //
+      function logout(msg){
+        if(msg == undefined){
+          comConfirm("로그아웃 하시겠습니까?", goLogout, "ko");
+        }else{
+          msgAlert(msg, goLogout, "ko");
+        }
+      }
+      function goLogout(){
+        $('.wrap-loader').fadeIn();
+        location.href	= urlLogout;
+      }
+      function chgLang(){
+        $('.wrap-loader').fadeIn();
+        location.href = context + "/core?attribute=coreFrame_en"+"&fake="+Date.now();
+      }
+      //학생 상태창 체크
+      function fnStatus(){
+        if($(".nav-layer.layerinfo").is(":visible")){
+          $(".nav-layer.layerinfo").css("display","none");
+        } else{
+          $(".nav-layer").css("display","none");
+          $(".nav-layer.layerinfo").css("display","block");
+        }
+        $("li.notification, li.registration").removeClass("active");
+      }
+      //=========================== E: ETC ====================== //
+    </script>
+</head>
+<body class="main">
+<div class="wrap-loader" style="display:none;"><span class="loading-helper"></span><div class="loader"></div><div class="loading-text">Loading</div></div>
+
+<span class="to-top"></span>
+
+<!-- <div class="header-login">
+    <div class="control is-opened" title="메뉴닫기"></div>
+    <div title="경희대학교 수강신청시스템"></div>
+</div> -->
+
+<!-- S: 상단 영역 -->
+<div class="header">
+    <div class="control is-opened" title="메뉴닫기" onClick="extendTimer();"></div>
+    <div class="logo" title="경희대학교 수강신청시스템">
+        <img src="/resources/img/layout/logo2.png">
+    </div><!-- 추가 : 2019.12.08 -->
+    <div class="is-right">
+        <div class="timer">
+            <span id="timerRemain">10:00</span>
+            <button type="button" onClick="javascript:extendTimer();">연장하기</button>
+        </div>
+        <!-- <div class="zooming">
+            <button type="button" class="zoom-in" onclick="zoomIn();">+</button>
+            <span id="scope_id">100%</span>
+            <button type="button" class="zoom-out" onclick="zoomOut();">-</button>
+            <button type="button" class="zoom-default" onclick="zoomReset();">기본 크기</button>
+        </div> -->
+        <!--
+        <span class="alert active" title="알림"></span>
+         -->
+        <span class="btn-lang" id="lang" onclick="alert('기능 미구현');">ENG</span>
+        <span class="home" title="Home" onclick="fnLoad(urlCoreNotice,'.notice');"></span>
+        <span class="logout" title="Logout" onclick="logout();"></span>
+    </div>
+</div>
+<!-- E: 상단 영역 -->
+
+<!-- S: 컨텐츠 영역 -->
+<!-- <div class="login-container"></div> -->
+<div class="container">
+    <div class="contents" id="contents"></div>
+    <div id="message" title="알림(notice)" style="display:none;z-index:2;">
+        <p class="alert-warning"><span id="msg"></span></p>
+    </div>
+    <div id="retake" title="재수강 대상 과목조회" style="display:none;"></div>
+    <div id="macro" title="매크로 방지용 키입력" style="display:none;"></div>
+    <div id="switDialog" title="착오자 내역" style="display:none;"></div>
+    <div class="footer">COPYRIGHT © KYUNG HEE UNIVERSITY. ALL RIGHT RESERVED.</div>
+</div>
+<!-- E: 컨텐츠 영역 -->
+
+<!--  S: 좌측 메뉴 -->
+<div class="nav">
+    <div class="login">로그인</div>
+    <div class="myinfo">
+        <span class="name-kor">KYUNG HEE</span>
+        <span class="name-eng">1234567890</span>
+    </div>
+    <!-- 위로가기 주석처리 <div class="control-up"></div> -->
+    <div class="wrap-menu">
+        <ul>
+            <li class="notice" onclick="fnLoad(urlCoreNotice,'this');">
+                <img src="/resources/img/layout/icon-notice.png">
+                <span class="menu-kor">공지사항</span>
+            </li>
+            <li onclick="alert('기능 미구현');">
+                <img src="/resources/img/layout/icon-planning.png">
+                <span class="menu-kor">종합시간표 조회</span>
+            </li>
+
+            <li onclick="alert('기능 미구현');">
+                <img src="/resources/img/layout/icon-subject.png">
+                <span class="menu-kor">희망과목내역</span>
+            </li>
+
+            <li onclick="alert('기능 미구현');">
+                <img src="/resources/img/layout/icon-search.png">
+                <span class="menu-kor">수강신청내역</span>
+            </li>
+
+            <!--
+            <li onclick="fnLoad(urlCorePointList,'this');">
+                <img src="/resources/img/layout/icon-search.png">
+                <span class="menu-kor">포인트내역</span>
+            </li>
+            -->
+
+
+            <li class="registration" onclick="fnLoad(urlSugangMain,'this');">
+                <img src="/resources/img/layout/icon-registration.png">
+                <span class="menu-kor">수강신청</span>
+            </li>
+            <!--
+            <li class="registration" onclick="fnLoad(urlSugangPointMain,'this');">
+                <img src="/resources/img/layout/icon-registration.png">
+                <span class="menu-kor">포인트배분</span>
+            </li>
+            -->
+
+
+        </ul>
+    </div>
+    <!-- 아래로가기 주석처리 <div class="control-down active"></div> -->
+
+    <!-- 레이어 -->
+    <div class="nav-layer layerinfo">
+        <div class="head"><!-- picture 삭제 -->
+            <div>
+                <p class="name"></p>
+                <p class="class">0000학년도 0학기 수강신청</p>
+            </div>
+            <button class="btn-logout" onClick="logout();">로그아웃</button>
+        </div>
+        <ul>
+            <li>
+                <label>성명</label>
+                <div>홍길동</div>
+            </li>
+            <li>
+                <label>학번</label>
+                <div>1234567890</div>
+            </li>
+            <li>
+                <label>학과</label>
+                <div>단과대학 학과</div>
+            </li>
+            <li>
+                <label>학년</label>
+                <div>0학년</div>
+            </li>
+
+            <li>
+                <label>수강가능학점</label>
+                <div><span class="value">21</span><span class=unit>학점</span></div>
+            </li>
+
+        </ul>
+    </div>
+</div>
+<!--  E: 좌측 메뉴 -->
+</body>
+</html>
